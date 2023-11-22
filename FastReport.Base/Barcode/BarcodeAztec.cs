@@ -35,16 +35,16 @@ namespace FastReport.Barcode
             ErrorCorrectionPercent = 33;
         }
 
-        internal override void Initialize(string text, bool showText, int angle, float zoom)
+        internal override void Initialize(string text, bool showText, int angle, float zoom, bool showMarker)
         {
-            base.Initialize(text, showText, angle, zoom);
+            base.Initialize(text, showText, angle, zoom, showMarker);
 
             matrix = Encoder.encode(System.Text.Encoding.ASCII.GetBytes(text), ErrorCorrectionPercent, 0).Matrix;
         }
 
         internal override SizeF CalcBounds()
         {
-            int textAdd = showText ? (int)(Font.SizeInPoints * PX_IN_PT) : 0;
+            int textAdd = showText ? (int)(FontHeight) : 0;
             return new SizeF(matrix.Width * PIXEL_SIZE, matrix.Height * PIXEL_SIZE + textAdd);
         }
 

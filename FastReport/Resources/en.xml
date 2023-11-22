@@ -37,6 +37,7 @@
     <DuplicateName Text="Object with name {0} already exists"/>
     <GroupHeaderHasNoGroupCondition Text="{0} has no group condition"/>
     <DuplicateStyle Text="Style witch such name already exists"/>
+    <EmptyDataEntryField Text="Fill in all data entry fields"/>
     <Error Text="Error"/>
     <EventError Text="Could not create event handler due to errors in source code"/>
     <ExportingPage Text="Exporting page {0} of {1}"/>
@@ -133,6 +134,7 @@
     <DialogPage Text="Form"/>
     <XmlDataConnection Text="XML database"/>
     <CsvDataConnection Text="CSV database"/>
+    <GoogleSheetsDataConnection Text="Google Sheets database"/>
     <OleDbDataConnection Text="OLE DB connection"/>
     <MsAccessDataConnection Text="MS Access connection"/>
     <MsSqlDataConnection Text="MS SQL connection"/>
@@ -2121,6 +2123,7 @@
         <Yes Text="Yes"/>
       </RightToLeft>
       <DisableHotkeys Text="Disable hotkeys"/>
+      <ShowProgress Text="Show progress window"/>
       <UseCompactMenu Text="Use compact menu"/>
       <Restart Text="* Restart required"/>
       <Reset Text="Reset config"/>
@@ -2355,6 +2358,19 @@
         <RowSpan Text="Row span (0 for auto):"/>
       </Other>
     </AdvMatrixHeaderEditor>
+    <SignInGoogle>
+      <Caption Text="Sign in Google API"/>
+      <SignInGoogleApi Text="Sign in Google API with OAuth 2.0"/>
+      <SignInApiKey Text="Sign in Google API with API key"/>
+      <ClientId Text="Client id"/>
+      <ClientSecret Text="Client secret"/>
+      <PathToFile Text="Path to .json file"/>
+      <ApiKey Text="API key"/>
+      <CheckPathToJson Text="Check .json file"/>
+      <SignIn Text="Sign in"/>
+      <OnConnection Text="Connection successful"/>
+      <OffConnection Text="Connection failed"/>
+    </SignInGoogle>
   </Forms>
   <ConnectionEditors>
     <Common>
@@ -2453,6 +2469,17 @@
       <ServerPort Text="Server port:"/>
       <Database Text="Database"/>
     </Clickhouse>
+    <GoogleSheets>
+      <ConfigureDatabase Text="Select database file"/>
+      <SelectSheetsId Text="Select sheetsId or URL adress: "/>
+      <TableName Text="Write table name: "/>
+      <StartColumnIndex Text="Start column index"/>
+      <EndColumnIndex Text="End column index"/>
+      <FieldNames Text="Field names in first string"/>
+      <AllTable Text="Entire table"/>
+      <SignIn Text="Sign in"/>
+      <FailedToLogin Text="Account login failed"/>
+    </GoogleSheets>
   </ConnectionEditors>
   <ComponentMenu>
     <Component>
@@ -2817,6 +2844,7 @@
       <FitAllColumsOnOnePage Text="Fit All Colums on One Page" />
       <FitAllRowsOnOnePage Text="Fit All Rows on One Page" />
       <GroupOnSeparateSheet Text="Groups on separate sheets"/>
+      <ForEachGroup Text="All groups"/>
       <PictureProperties Text="Pictures properties"/>
       <MoveAndModify Text="Move and modify along with the cell"/>
       <MoveOnly Text="Move but not resize"/>
@@ -2832,6 +2860,7 @@
       <Basic Text="Basic"/>
       <Other Text="Other"/>
       <ShowGridlines Text="Show gridlines"/>
+      <UngroupSheets Text="Ungroup sheets"/>
       <UseLocaleFormating Text="Use locale formatting of data"/>
       <CurrencyToAccounting Text="Convert currency to accounting format"/>
       <GeneralToText Text="Convert general to text format"/>
@@ -2983,6 +3012,7 @@
       <PrinterSettings Text="Printer Settings"/>
       <Density Text="Density"/>
       <FontScale Text="Font Scale"/>
+      <BarcodeScale Text="Barcode Scale"/>
       <PrintAsBitmap Text="Print As Bitmap"/>
       <Version Text="Version of ZPL"/>
     </Zpl>

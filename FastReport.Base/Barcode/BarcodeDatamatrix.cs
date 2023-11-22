@@ -1066,9 +1066,9 @@ namespace FastReport.Barcode
                 writer.WriteBool(prefix + "AutoEncode", AutoEncode);
         }
 
-        internal override void Initialize(string text, bool showText, int angle, float zoom)
+        internal override void Initialize(string text, bool showText, int angle, float zoom, bool showMarker)
         {
-            base.Initialize(text, showText, angle, zoom);
+            base.Initialize(text, showText, angle, zoom, showMarker);
 
             if (SymbolSize == DatamatrixSymbolSize.Auto)
             {
@@ -1087,7 +1087,7 @@ namespace FastReport.Barcode
 
         internal override SizeF CalcBounds()
         {
-            int textAdd = showText ? (int)(Font.SizeInPoints * PX_IN_PT) : 0;
+            int textAdd = showText ? (int)(FontHeight) : 0;
             return new SizeF(width * PixelSize, height * PixelSize + textAdd);
         }
 

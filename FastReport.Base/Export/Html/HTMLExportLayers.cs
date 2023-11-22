@@ -6,6 +6,7 @@ using FastReport.Utils;
 using System.Windows.Forms;
 using FastReport.Export;
 using System.ComponentModel;
+using System.Drawing.Text;
 
 namespace FastReport.Export.Html
 {
@@ -309,13 +310,18 @@ namespace FastReport.Export.Html
         private FastString GetHtmlParagraph(HtmlTextRenderer renderer)
         {
             FastString sb = new FastString();
-
+            bool isFirstLine;
             foreach (HtmlTextRenderer.Paragraph paragraph in renderer.Paragraphs)
+            {
+                isFirstLine = true;
                 foreach (HtmlTextRenderer.Line line in paragraph.Lines)
                 {
                     if (sb == null) sb = new FastString();
+
                     sb.Append("<span style=\"");
                     sb.Append("display:block;");
+                    if (isFirstLine)
+                        sb.Append($"text-indent:{Math.Floor(renderer.ParagraphFormat.FirstLineIndent)}px;");
                     if (line.Top + line.Height > renderer.DisplayRect.Bottom)
                         sb.Append("height:").Append(Math.Max(renderer.DisplayRect.Bottom - line.Top, 0).ToString(HtmlTextRenderer.CultureInfo)).Append("px;");
                     else
@@ -326,7 +332,8 @@ namespace FastReport.Export.Html
                             sb.Append("margin-bottom:").Append(line.LineSpacing.ToString(HtmlTextRenderer.CultureInfo)).Append("px;");
                         }
                     }
-                    sb.Append("overflow:hidden;");
+                    if (!isFirstLine)
+                        sb.Append("overflow:hidden;");
                     sb.Append("line-height:").Append(line.Height.ToString(HtmlTextRenderer.CultureInfo)).Append("px;");
                     if (line.HorzAlign == HorzAlign.Justify)
                         sb.Append("text-align-last:justify;");
@@ -369,7 +376,7 @@ namespace FastReport.Export.Html
                                         case '\t':
                                             if (word.Type == HtmlTextRenderer.WordType.Tab)
                                             {
-                                                if(layers)
+                                                if (layers)
                                                     sb.Append($"<span style=\"tab-size: {Math.Round(prevWidth + run.Width)}px;\">&Tab;</span>");
                                                 else
                                                     sb.Append($"<span style=\"tab-size: {Math.Round(run.Left + run.Width)}px;\">&Tab;</span>");
@@ -417,7 +424,10 @@ namespace FastReport.Export.Html
                         styleDesc.ToHtml(sb, true);
                     else sb.Append("<br/>");
                     sb.Append("</span>");
+
+                    isFirstLine = false;
                 }
+            }
             return sb;
         }
 
@@ -468,13 +478,17 @@ namespace FastReport.Export.Html
                     {
                         using (Graphics g = Graphics.FromImage(image))
                         {
+                            var needClear = obj is TextObjectBase
 #if MSCHART
-                            if (obj is TextObjectBase || obj is FastReport.MSChart.MSChartObject)
-                                g.Clear(GetClearColor(obj));
-#else
-                            if (obj is TextObjectBase)
-                                g.Clear(GetClearColor(obj));
+                                            || obj is MSChart.MSChartObject
 #endif
+                                            || obj is Gauge.GaugeObject;
+
+                            if (needClear)
+                            {
+                                g.Clear(Color.Transparent);
+                                g.TextRenderingHint = TextRenderingHint.AntiAlias;
+                            }
 
                             float Left = Width > 0 ? obj.AbsLeft : obj.AbsLeft + Width;
                             float Top = Height > 0 ? obj.AbsTop : obj.AbsTop + Height;
@@ -544,42 +558,6 @@ namespace FastReport.Export.Html
                 }
             }
             return result;
-        }
-
-        // Method to get background color of parent to fix an issue with blurred rotated text. g.Clear(Color.Transparent) - reason.
-        private Color GetClearColor(ReportComponentBase obj)
-        {
-            var color = Color.Transparent;
-            ReportComponentBase tempObj = obj;
-
-            if (obj.Parent is BandBase && obj.Band.Fill.IsTransparent)
-            {
-                color = Color.White;
-            }
-            else if (obj.Parent is BandBase)
-            {
-                color = obj.Band.FillColor;
-            }
-            else
-            {
-                var i = 0;
-                while (tempObj != null && tempObj.Fill.IsTransparent && !(tempObj.Parent is BandBase) && i < 10)
-                {
-                    i++;
-                    tempObj = tempObj.Parent as ReportComponentBase;
-                    
-                    if (tempObj != null && !tempObj.Fill.IsTransparent)
-                    {
-                        color = tempObj.FillColor;
-                        break;
-                    }
-
-                    if (tempObj?.Parent is BandBase)
-                        color = Color.White;
-                }
-            }
-
-            return color;
         }
 
         private void LayerPicture(FastString Page, ReportComponentBase obj, FastString text)

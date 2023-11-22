@@ -43,9 +43,9 @@ namespace FastReport.Barcode
             Mode = 4;
         }
 
-        internal override void Initialize(string text, bool showText, int angle, float zoom)
+        internal override void Initialize(string text, bool showText, int angle, float zoom, bool showMarker)
         {
-            base.Initialize(text, showText, angle, zoom);
+            base.Initialize(text, showText, angle, zoom, showMarker);
 
             maxiCodeImpl = new MaxiCodeImpl(base.text);
             maxiCodeImpl.setMode(Mode);
@@ -54,7 +54,7 @@ namespace FastReport.Barcode
 
         internal override SizeF CalcBounds()
         {
-            int textAdd = showText ? (int)(Font.SizeInPoints * PX_IN_PT) : 0;
+            int textAdd = showText ? (int)(FontHeight) : 0;
             SizeF s = new SizeF();
 
             foreach(MaxiCodeImpl.Hexagon hex in maxiCodeImpl.hexagons)

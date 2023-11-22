@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using FastReport.Utils;
+using System.Drawing;
 
 namespace FastReport.Barcode
 {
@@ -12,10 +8,7 @@ namespace FastReport.Barcode
     /// </summary>
     public abstract class Barcode2DBase : BarcodeBase
     {
-        public Barcode2DBase() : base()
-        {
-            Font = new Font("Arial", 11);
-        }
+        internal float FontHeight => Font.Height * DrawUtils.ScreenDpiFX * 18 / 13; // 18/13 to be more or less compatible with old behavior (Arial,8 with hardcoded 18px height)
 
         private void DrawBarcode(IGraphics g, float width, float height)
         {
@@ -34,13 +27,14 @@ namespace FastReport.Barcode
                 g.FillRectangle(Brushes.White, width / 2 - width / 100f * 4, top / 2 - top / 100 * 1.5f, width / 100f * 8, top / 100 * 3);
                 g.FillRectangle(Brushes.White, width / 2 - width / 100f * 1.5f, top / 2 - top / 100 * 4, width / 100f * 3, top / 100 * 8);
             }
-            if (text.StartsWith("ST"))
+            if (showMarker && text.StartsWith("ST"))
             {
-                Pen skyBluePen = new Pen(Brushes.Black);
-                skyBluePen.Width = (kx * 4 * zoom) / 2;
-
-                g.DrawLine(skyBluePen, width - 2, height / 2, width - 2, height - 2);
-                g.DrawLine(skyBluePen, width / 2, height - 2, width - 2, height - 2);
+                using (Pen skyBluePen = new Pen(Brushes.Black))
+                {
+                    skyBluePen.Width = (kx * 4 * zoom) / 2;
+                    g.DrawLine(skyBluePen, width - 2, height / 2, width - 2, height - 2);
+                    g.DrawLine(skyBluePen, width / 2, height - 2, width - 2, height - 2);
+                }
             }
             // draw the text.
             if (showText)
@@ -50,10 +44,11 @@ namespace FastReport.Barcode
                 {
                     // When we print, .Net automatically scales the font. However, we need to handle this process.
                     // Downscale the font to the screen resolution, then scale by required value (ky).
-                    float fontZoom = Font.SizeInPoints * PX_IN_PT / (int)g.MeasureString(data, Font).Height * ky;
+                    float fontHeight = FontHeight;
+                    float fontZoom = fontHeight / (int)g.MeasureString(data, Font).Height * ky;
                     using (Font drawFont = new Font(Font.FontFamily, Font.Size * fontZoom, Font.Style))
                     {
-                        g.DrawString(data, drawFont, Brushes.Black, new RectangleF(0, height - Font.SizeInPoints * PX_IN_PT * ky, width, Font.SizeInPoints * PX_IN_PT * ky));
+                        g.DrawString(data, drawFont, Brushes.Black, new RectangleF(0, height - fontHeight * ky, width, fontHeight * ky));
                     }
                 }
             }
@@ -63,6 +58,7 @@ namespace FastReport.Barcode
         {
         }
 
+        /// <inheritdoc/>
         public override void DrawBarcode(IGraphics g, RectangleF displayRect)
         {
             float width = angle == 90 || angle == 270 ? displayRect.Height : displayRect.Width;

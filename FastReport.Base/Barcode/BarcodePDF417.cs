@@ -1496,9 +1496,9 @@ namespace FastReport.Barcode
         writer.WriteValue(prefix + "PixelSize", PixelSize);
     }
 
-    internal override void Initialize(string text, bool showText, int angle, float zoom)
+    internal override void Initialize(string text, bool showText, int angle, float zoom, bool showMarker)
     {
-      base.Initialize(text, showText, angle, zoom);
+      base.Initialize(text, showText, angle, zoom, showMarker);
       if (String.IsNullOrEmpty(text))
         bytes = new byte[0];
       else
@@ -1514,7 +1514,7 @@ namespace FastReport.Barcode
 
     internal override SizeF CalcBounds()
     {
-      int textAdd = showText ? (int)(Font.SizeInPoints * PX_IN_PT) : 0;
+      int textAdd = showText ? (int)(FontHeight) : 0;
       return new SizeF(bitColumns * PixelSize.Width, codeRows * PixelSize.Height + textAdd);
     }
     

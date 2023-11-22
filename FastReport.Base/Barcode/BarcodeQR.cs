@@ -176,17 +176,19 @@ namespace FastReport.Barcode
                 writer.WriteValue(prefix + "Encoding", Encoding);
             if (c == null || QuietZone != c.QuietZone)
                 writer.WriteBool(prefix + "QuietZone", QuietZone);
+            if (c == null || showMarker != c.showMarker)
+                writer.WriteBool(prefix + "ShowMarker", showMarker);
         }
 
-        internal override void Initialize(string text, bool showText, int angle, float zoom)
+        internal override void Initialize(string text, bool showText, int angle, float zoom, bool showMarker)
         {
-            base.Initialize(text, showText, angle, zoom);
+            base.Initialize(text, showText, angle, zoom, showMarker);
             matrix = QRCodeWriter.encode(base.text, 0, 0, GetErrorCorrectionLevel(), GetEncoding(), QuietZone);
         }
 
         internal override SizeF CalcBounds()
         {
-            int textAdd = showText ? (int)(Font.SizeInPoints * PX_IN_PT) : 0;
+            int textAdd = showText ? (int)(FontHeight) : 0;
             return new SizeF(matrix.Width * PixelSize, matrix.Height * PixelSize + textAdd);
         }
 
